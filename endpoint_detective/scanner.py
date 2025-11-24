@@ -13,12 +13,16 @@ class ProtocolProbe:
     name: str
     port: int
     hint: str
+    socket_type: int = socket.SOCK_STREAM
 
     def check(self, ip_address: str, timeout: float) -> bool:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        with socket.socket(socket.AF_INET, self.socket_type) as sock:
             sock.settimeout(timeout)
             try:
-                sock.connect((ip_address, self.port))
+                if self.socket_type == socket.SOCK_STREAM:
+                    sock.connect((ip_address, self.port))
+                else:
+                    sock.sendto(b"", (ip_address, self.port))
             except (TimeoutError, OSError):
                 return False
             return True
@@ -142,7 +146,12 @@ class EndpointScanner:
             ProtocolProbe(name="IMAP", port=143, hint="Mail access"),
             ProtocolProbe(name="POP3", port=110, hint="Mail access"),
             ProtocolProbe(name="TELNET", port=23, hint="Legacy remote shell"),
-            ProtocolProbe(name="SNMP", port=161, hint="Network management"),
+            ProtocolProbe(
+                name="SNMP",
+                port=161,
+                hint="Network management",
+                socket_type=socket.SOCK_DGRAM,
+            ),
             ProtocolProbe(name="IPP", port=631, hint="Printing"),
             ProtocolProbe(name="LPD", port=515, hint="Printing"),
             ProtocolProbe(name="RAW_PRINTING", port=9100, hint="Direct printing"),

@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from .report import render_table
+from .report import render_csv, render_table
 from .scanner import EndpointScanner
 
 
@@ -34,6 +34,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Optional path to write the report instead of printing to stdout",
     )
+    parser.add_argument(
+        "--csv",
+        action="store_true",
+        help="Output the report as CSV instead of a table",
+    )
     return parser.parse_args(argv)
 
 
@@ -46,11 +51,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Input file not found: {args.input}", file=sys.stderr)
         return 1
 
-    table = render_table(results)
+    report = render_csv(results) if args.csv else render_table(results)
     if args.output:
-        args.output.write_text(table + "\n", encoding="utf-8")
+        args.output.write_text(report + "\n", encoding="utf-8")
     else:
-        print(table)
+        print(report)
     return 0
 
 
