@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import csv
+import io
 from typing import Iterable, List
 
 from .models import EndpointReportRow
@@ -33,3 +35,13 @@ def _format_row(columns: List[str], widths: List[int]) -> str:
 def _format_divider(widths: List[int]) -> str:
     parts = ["-" * width for width in widths]
     return "-+-".join(parts)
+
+
+def render_csv(rows: Iterable[EndpointReportRow]) -> str:
+    rows_list: List[EndpointReportRow] = list(rows)
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["IP Address", "Hostname", "Protocols", "Endpoint Type"])
+    for row in rows_list:
+        writer.writerow([row.ip_address, row.hostname, row.protocol_list(), row.endpoint_label()])
+    return output.getvalue().rstrip("\n")

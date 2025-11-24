@@ -1,6 +1,6 @@
 # Endpoint Detective
 
-Endpoint Detective is a lightweight Python tool for scanning a list of network endpoints, detecting common protocols, and inferring the likely device type. Provide a text file with one IP address per line and receive a tabular report summarizing the findings.
+Endpoint Detective is a lightweight Python tool for scanning a list of network endpoints, detecting common protocols (HTTP/HTTPS, SSH, SMB, SNMP, and more), and inferring the likely device type. Provide a text file with one IP address per line and receive a tabular or CSV report summarizing the findings.
 
 ## Requirements
 
@@ -21,6 +21,7 @@ python -m endpoint_detective targets.txt --timeout 0.5 --workers 32
 - `--timeout`: Socket timeout in seconds for each probe (default: `0.5`).
 - `--workers`: Maximum number of concurrent scans (default: `32`).
 - `--output`: Optional path to write the table report instead of printing to stdout.
+- `--csv`: Output the report as CSV instead of an aligned table.
 
 ## Output
 
